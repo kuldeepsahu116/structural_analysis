@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Frame Structural Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="header">FRAME STRUCTURAL ANALYZER</div>
+
+<!-- NAVIGATION -->
+<div class="nav-bar">
+    <button onclick="showPage(1)">Model</button>
+    <button onclick="showPage(2)">Supports & Loads</button>
+    <button onclick="showPage(3)">Results</button>
+</div>
+
+<div class="main-container">
+
+    <!-- LEFT PANEL -->
+    <div class="left-panel">
+
+        <!-- ================= PAGE 1 ================= -->
+        <div class="page" id="page1">
+
+            <!-- TOP ROW -->
+            <div class="page1-top">
+
+                <!-- INSTRUCTION -->
+                <div class="card instruction-card">
+
+                    <h4>Instructions</h4>
+
+                    <div class="table-wrapper">
+
+                        <div class="instruction-section">
+                            <b>Units</b>
+                            <p>Force: kN &nbsp;&nbsp; Length: m</p>
+                        </div>
+
+                        <div class="instruction-section">
+                            <b>Sign Convention</b>
+
+                            <table class="mini-table">
+                                <tr><td>U/X</td><td>Horizontal</td><td>→ Right</td></tr>
+                                <tr><td>U/Y</td><td>Vertical</td><td>↑ Upward</td></tr>
+                                <tr><td>θ/M</td><td>Rotation</td><td>ACW</td></tr>
+                            </table>
+                        </div>
+
+                        <div class="instruction-section">
+                            <b>Input Tips</b>
+
+                            <ul>
+                                <li>Define nodes first</li>
+                                <li>Members must connect valid nodes</li>
+                                <li>Supports must restrain structure</li>
+                                <li>UDL acts in local Y direction</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- NODES -->
+                <div class="card">
+
+                    <h4>Nodes</h4>
+
+                    <div class="table-wrapper">
+
+                        <table class="input-table" id="nodesTable">
+                            <tr>
+                                <th>ID</th>
+                                <th>X</th>
+                                <th>Y</th>
+                                <th></th>
+                            </tr>
+                        </table>
+
+                    </div>
+
+                    <button onclick="addNode()">+ Add</button>
+
+                </div>
+
+            </div>
+
+            <!-- MEMBERS -->
+            <div class="card members-card">
+
+                <h4>Members</h4>
+
+                <div class="table-wrapper">
+
+                    <table class="input-table" id="membersTable">
+                        <tr>
+                            <th>ID</th>
+                            <th>Start</th>
+                            <th>End</th>
+                            <th>E</th>
+                            <th>A</th>
+                            <th>I</th>
+                            <th></th>
+                        </tr>
+                    </table>
+
+                </div>
+
+                <button onclick="addMember()">+ Add</button>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= PAGE 2 ================= -->
+        <div class="page" id="page2" style="display:none;">
+
+            <!-- SUPPORTS -->
+            <div class="card page2-half">
+
+                <h4>Supports</h4>
+
+                <div class="table-wrapper">
+
+                    <table class="input-table" id="supportsTable">
+                        <tr>
+                            <th>Node</th>
+                            <th>X</th>
+                            <th>Y</th>
+                            <th>θ</th>
+                            <th></th>
+                        </tr>
+                    </table>
+
+                </div>
+
+                <button onclick="addSupport()">+ Add</button>
+
+            </div>
+
+            <!-- LOADS -->
+            <div class="card page2-half">
+
+                <h4>Loads</h4>
+
+                <!-- LOAD CARD AREA -->
+                <div
+                    class="load-card-container"
+                    id="loadCardContainer">
+
+                </div>
+
+                <!-- LOAD CARD TEMPLATE -->
+                <div
+                    id="loadCardTemplate"
+                    style="display:none;">
+
+                    <div class="load-item">
+                        <div class="load-card-layout">
+
+                            <!-- LEFT -->
+                            <div class="load-left">
+                                <div class="load-title"></div>
+                                <div class="load-description"></div>
+                            </div>
+
+                            <!-- RIGHT -->
+                            <div class="load-right">
+
+                                <!-- ASSIGN -->
+                                <div class="load-assignment-section">
+                                    <input
+                                        class="load-assignment-input"
+                                        placeholder="Assign nodes/members">
+                                    <button class="assign-load-btn">
+                                        Assign
+                                    </button>
+                                </div>
+
+                                <!-- CURRENT ASSIGNMENT -->
+                                <div class="load-assignment"></div>
+
+                                <!-- ACTION BUTTONS -->
+                                <div class="load-buttons">
+                                    <button class="edit-load-btn">
+                                        Edit
+                                    </button>
+                                    <button class="delete-btn">
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ADD LOAD -->
+                <button onclick="openLoadPopup()">
+                    + Add Load
+                </button>
+
+            </div>
+
+
+
+            <!-- ================================================= -->
+            <!-- LOAD POPUP -->
+            <!-- ================================================= -->
+
+            <div
+                class="popup-overlay"
+                id="loadPopup">
+
+                <div class="popup-card popup-grid">
+
+                    <!-- LEFT -->
+                    <div class="load-instruction-panel">
+                        <h4>Instructions</h4>
+                        <div id="loadInstructionContent">
+                            Select load type to view instructions.
+                        </div>
+
+                    </div>
+                    <!-- RIGHT -->
+                    <div class="popup-input-panel">
+
+                        <h3>Add Load</h3>
+
+                        <!-- CATEGORY -->
+                        <label>Category</label>
+
+                        <select
+                            id="loadCategory"
+                            onchange="updateLoadPopup()">
+
+                            <option value="nodal">
+                                Nodal Load
+                            </option>
+
+                            <option value="member">
+                                Member Load
+                            </option>
+
+                        </select>
+
+
+
+                        <!-- TYPE -->
+                        <label>Type</label>
+
+                        <select
+                            id="loadType"
+                            onchange="updateLoadFields()">
+
+                            <!-- Dynamic -->
+                        </select>
+
+
+
+                        <!-- DIRECTION -->
+                        <div id="directionGroup">
+
+                            <label>Direction</label>
+
+                            <select id="loadDirection">
+
+                                <option value="X">
+                                    Horizontal (X)
+                                </option>
+
+                                <option value="Y">
+                                    Vertical (Y)
+                                </option>
+
+                                <option value="M">
+                                    Moment
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+
+                        <!-- VALUE 1 -->
+                        <div id="value1Group">
+
+                            <label id="value1Label">
+                                Value
+                            </label>
+
+                            <input id="loadValue1">
+
+                        </div>
+
+
+
+                        <!-- VALUE 2 -->
+                        <div id="value2Group">
+
+                            <label id="value2Label">
+                                Value 2
+                            </label>
+
+                            <input id="loadValue2">
+
+                        </div>
+
+
+
+                        <!-- a -->
+                        <div id="aGroup">
+
+                            <label>a</label>
+
+                            <input id="loadA">
+
+                        </div>
+
+
+
+                        <!-- b -->
+                        <div id="bGroup">
+
+                            <label>b</label>
+
+                            <input id="loadB">
+
+                        </div>
+
+
+                        <!-- BUTTONS -->
+                        <div class="popup-buttons">
+
+                            <button onclick="saveLoad()">
+                                Save
+                            </button>
+
+                            <button
+                                class="delete-btn"
+                                onclick="closeLoadPopup()">
+
+                                Cancel
+
+                            </button>
+
+                        </div>
+
+                    </div>    
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= PAGE 3 ================= -->
+        <div class="page" id="page3" style="display:none;">
+
+            <!-- LOADING -->
+            <div id="loading" style="display:none; text-align:center;">
+                <div class="spinner"></div>
+                <p>Running analysis...</p>
+            </div>
+
+            <!-- PLACEHOLDER -->
+            <div id="resultPlaceholder" class="card">
+                <p style="text-align:center; font-size:13px;">
+                    Fill inputs and click <b>ANALYZE</b> to view results
+                </p>
+            </div>
+
+            <!-- RESULTS LAYOUT -->
+            <div class="results-layout"
+                style="display:none;">
+
+                <!-- SIDEBAR -->
+                <div class="results-sidebar">
+                    <button
+                        class="results-nav-btn active-result-tab"
+                        onclick="showResultTab('reactionTab',this); setDiagram('structure');">
+                        Reactions & Displacements
+                    </button>
+
+                    <button
+                        class="results-nav-btn"
+                        onclick="showResultTab('memberForceTab',this); setDiagram('structure');">
+                        Member Forces
+                    </button>
+
+                    <button
+                        class="results-nav-btn"
+                        onclick="showResultTab('deflectionTab',this); setDiagram('deflection');">
+                        Deflection
+                    </button>
+
+                    <button
+                        class="results-nav-btn"
+                        onclick="showResultTab('sfdTab',this); setDiagram('sfd');">
+                        SFD
+                    </button>
+
+                    <button
+                        class="results-nav-btn"
+                        onclick="showResultTab('bmdTab',this); setDiagram('bmd');">
+                        BMD
+                    </button>
+                </div>
+
+                <!-- RESULT CONTENT -->
+                <div class="results-content">
+
+                    <!-- REACTIONS -->
+                    <div
+                        id="reactionTab"
+                        class="result-tab active-result-tab-content">
+                        <div id="reactionCard"></div>
+                        <div id="displacementCard"></div>
+                    </div>
+
+                    <!-- MEMBER FORCES -->
+                    <div
+                        id="memberForceTab"
+                        class="result-tab">
+                        <div id="memberForceCard"></div>
+                    </div>
+
+                    <!-- DEFLECTION -->
+                    <div
+                        id="deflectionTab"
+                        class="result-tab">
+                        <div id="deflectionTable"></div>
+                    </div>
+
+                    <!-- SFD -->
+                    <div
+                        id="sfdTab"
+                        class="result-tab">
+                        <div id="sfdTable"></div>
+                    </div>
+
+                    <!-- BMD -->
+                    <div
+                        id="bmdTab"
+                        class="result-tab">
+                        <div id="bmdTable"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- RIGHT PANEL (ALWAYS VISIBLE) -->
+    <div class="right-panel">
+
+        <!-- STRUCTURE VIEW -->
+        <div class="card structure-card">
+
+            <div class="structureHeader">
+
+                <h4>Structure View</h4>
+
+                <!-- DIAGRAM MENU BUTTON -->
+                <div class="diagramMenuContainer">
+                    <button
+                        id="diagramMenuBtn"
+                        class="diagramMenuBtn"
+                        onclick="toggleDiagramMenu()"
+                    >
+                        ☰
+                    </button>
+                    <!-- POPUP -->
+                    <div
+                        id="diagramMenuPopup"
+                        class="diagramMenuPopup">
+
+                        <div class="diagramMenuHeader">
+                            <span>Diagram Scales</span>
+                        </div>
+
+                        <!-- SFD -->
+                        <div class="diagramScaleRow">
+                            <span>SFD</span>
+                            <div class="diagramScaleControls">
+                                <input
+                                    type="number"
+                                    id="sfdScaleInput"
+                                    value="8"
+                                    step="1"
+                                    min="0"
+                                    onchange="updateDiagramScale('sfd')"
+                                >
+                            </div>
+                        </div>
+
+                        <!-- BMD -->
+                        <div class="diagramScaleRow">
+                            <span>BMD</span>
+                            <div class="diagramScaleControls">
+                                <input
+                                    type="number"
+                                    id="bmdScaleInput"
+                                    value="4"
+                                    step="1"
+                                    min="0"
+                                    onchange="updateDiagramScale('bmd')"
+                                >
+                            </div>
+                        </div>
+
+                        <!-- DEFLECTION -->
+                        <div class="diagramScaleRow">
+                            <span>Deflection</span>
+                            <div class="diagramScaleControls">
+                                <input
+                                    type="number"
+                                    id="deflectionScaleInput"
+                                    value="80"
+                                    step="10"
+                                    min="0"
+                                    onchange="updateDiagramScale('deflection')"
+                                >
+                            </div>
+                        </div>
+
+                        <!-- RESET BUTTON -->
+                        <button
+                            class="resetDiagramBtn"
+                            onclick="resetDiagramScales()"
+                        >
+                            Reset Diagram Scales
+                        </button>
+
+                        <!-- VISIBILITY -->
+                        <div class="diagramVisibilityHeader">
+                            View Options
+                        </div>
+                        <div class="diagramToggleRow">
+                            <label>
+                                <span>Show Loads</span>
+                                <input
+                                    type="checkbox"
+                                    id="showLoadsToggle"
+                                    checked
+                                    onchange="toggleViewOptions()"
+                                >
+                            </label>
+                        </div>
+
+                        <div class="diagramToggleRow">
+                            <label>
+                                <span>Show Supports</span>
+                                <input
+                                    type="checkbox"
+                                    id="showSupportsToggle"
+                                    checked
+                                    onchange="toggleViewOptions()"
+                                >
+                            </label>
+                        </div>
+
+                        <div class="diagramToggleRow">
+                            <label>
+                                <span>Show Labels</span>
+                                <input
+                                    type="checkbox"
+                                    id="showLabelsToggle"
+                                    checked
+                                    onchange="toggleViewOptions()"
+                                >
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <canvas id="structureCanvas"></canvas>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div id="actionButtonArea">
+
+            <button id="nextBtn" onclick="nextPage()">NEXT</button>
+
+            <button id="analyzeBtn"
+                onclick="analyzeAndShow();"
+                style="display:none;">
+                ANALYZE
+            </button>
+
+            <button onclick="resetView()">
+                RESET VIEW
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/ui.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/data.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/drawing.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/analysis.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/navigation.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+</body>
+</html>
