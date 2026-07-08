@@ -14,6 +14,7 @@
     <button onclick="showPage(1)">Model</button>
     <button onclick="showPage(2)">Supports & Loads</button>
     <button onclick="showPage(3)">Results</button>
+    <button onclick="showPage(4)">Report</button>
 </div>
 
 <div class="main-container">
@@ -56,7 +57,6 @@
                                 <li>Define nodes first</li>
                                 <li>Members must connect valid nodes</li>
                                 <li>Supports must restrain structure</li>
-                                <li>UDL acts in local Y direction</li>
                             </ul>
                         </div>
 
@@ -216,6 +216,12 @@
 
                 <div class="popup-card popup-grid">
 
+                    <button
+                        class="popup-close-btn"
+                        onclick="closeLoadPopup()">
+                        &times;
+                    </button>
+
                     <!-- LEFT -->
                     <div class="load-instruction-panel">
                         <h4>Instructions</h4>
@@ -361,96 +367,233 @@
         <!-- ================= PAGE 3 ================= -->
         <div class="page" id="page3" style="display:none;">
 
-            <!-- LOADING -->
-            <div id="loading" style="display:none; text-align:center;">
-                <div class="spinner"></div>
-                <p>Running analysis...</p>
+            <div class="results-column">
+
+                <!-- LOADING -->
+                <div id="loading" style="display:none; text-align:center;">
+                    <div class="spinner"></div>
+                    <p>Running analysis...</p>
+                </div>
+
+                <!-- PLACEHOLDER -->
+                <div id="resultPlaceholder" class="card">
+                    <p style="text-align:center; font-size:13px;">
+                        Fill inputs and click <b>ANALYZE</b> to view results
+                    </p>
+                </div>
+
+                <!-- RESULTS LAYOUT -->
+                <div class="results-layout"
+                    style="display:none;">
+
+                    <!-- SIDEBAR -->
+                    <div class="results-sidebar">
+                        <button
+                            class="results-nav-btn active-result-tab"
+                            onclick="showResultTab('reactionTab',this); setDiagram('structure');">
+                            Reactions
+                        </button>
+
+                        <button
+                            class="results-nav-btn"
+                            onclick="showResultTab('displacementTab',this); setDiagram('structure');">
+                            Displacements
+                        </button>
+
+                        <button
+                            class="results-nav-btn"
+                            onclick="showResultTab('memberForceTab',this); setDiagram('structure');">
+                            Member Forces
+                        </button>
+
+                        <button
+                            class="results-nav-btn"
+                            onclick="showResultTab('deflectionTab',this); setDiagram('deflection');">
+                            Deflection
+                        </button>
+
+                        <button
+                            class="results-nav-btn"
+                            onclick="showResultTab('sfdTab',this); setDiagram('sfd');">
+                            SFD
+                        </button>
+
+                        <button
+                            class="results-nav-btn"
+                            onclick="showResultTab('bmdTab',this); setDiagram('bmd');">
+                            BMD
+                        </button>
+                    </div>
+
+                    <!-- RESULT CONTENT -->
+                    <div class="results-content">
+
+                        <!-- REACTIONS -->
+                        <div
+                            id="reactionTab"
+                            class="result-tab active-result-tab-content">
+                            <div id="reactionCard"></div>
+                        </div>
+
+                        <!-- DISPLACEMENT -->
+                        <div
+                            id="displacementTab"
+                            class="result-tab">
+                            <div id="displacementCard"></div>
+                        </div>
+
+                        <!-- MEMBER FORCES -->
+                        <div
+                            id="memberForceTab"
+                            class="result-tab">
+                            <div id="memberForceCard"></div>
+                        </div>
+
+                        <!-- DEFLECTION -->
+                        <div
+                            id="deflectionTab"
+                            class="result-tab">
+                            <div id="deflectionTable"></div>
+                        </div>
+
+                        <!-- SFD -->
+                        <div
+                            id="sfdTab"
+                            class="result-tab">
+                            <div id="sfdTable"></div>
+                        </div>
+
+                        <!-- BMD -->
+                        <div
+                            id="bmdTab"
+                            class="result-tab">
+                            <div id="bmdTable"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="results-actions">
+                    <button id="analyzeBtn"
+                        onclick="analyzeAndShow();">
+                        ANALYZE
+                    </button>
+                </div>
             </div>
+        </div>
 
-            <!-- PLACEHOLDER -->
-            <div id="resultPlaceholder" class="card">
-                <p style="text-align:center; font-size:13px;">
-                    Fill inputs and click <b>ANALYZE</b> to view results
-                </p>
-            </div>
+        <div class="page" id="page4" style="display:none;">
 
-            <!-- RESULTS LAYOUT -->
-            <div class="results-layout"
-                style="display:none;">
-
+            <div class="report-layout">
+                
                 <!-- SIDEBAR -->
-                <div class="results-sidebar">
+                <div class="report-sidebar">
+
                     <button
-                        class="results-nav-btn active-result-tab"
-                        onclick="showResultTab('reactionTab',this); setDiagram('structure');">
-                        Reactions & Displacements
+                        class="report-select-nav-btn"
+                        onclick="toggleSelectAllReport()">
+                        Select All
+                    </button>                    
+
+                    <button
+                        class="report-nav-btn active-report-tab"
+                        onclick="showReportSection('nodes',this)">
+                        Nodes
                     </button>
 
                     <button
-                        class="results-nav-btn"
-                        onclick="showResultTab('memberForceTab',this); setDiagram('structure');">
+                        class="report-nav-btn"
+                        onclick="showReportSection('members',this)">
+                        Members
+                    </button>
+
+                    <button
+                        class="report-nav-btn"
+                        onclick="showReportSection('supports',this)">
+                        Supports
+                    </button>
+
+                    <button
+                        class="report-nav-btn"
+                        onclick="showReportSection('loads',this)">
+                        Loads
+                    </button>
+
+                    <button
+                        class="report-nav-btn"
+                        onclick="showReportSection('reactions',this)">
+                        Reactions
+                    </button>
+
+                    <button
+                        class="report-nav-btn"
+                        onclick="showReportSection('displacements',this)">
+                        Displacements
+                    </button>
+
+                    <button
+                        class="report-nav-btn"
+                        onclick="showReportSection('forces',this)">
                         Member Forces
                     </button>
 
                     <button
-                        class="results-nav-btn"
-                        onclick="showResultTab('deflectionTab',this); setDiagram('deflection');">
-                        Deflection
-                    </button>
-
-                    <button
-                        class="results-nav-btn"
-                        onclick="showResultTab('sfdTab',this); setDiagram('sfd');">
+                        class="report-nav-btn"
+                        onclick="showReportSection('sfd',this)">
                         SFD
                     </button>
 
                     <button
-                        class="results-nav-btn"
-                        onclick="showResultTab('bmdTab',this); setDiagram('bmd');">
+                        class="report-nav-btn"
+                        onclick="showReportSection('bmd',this)">
                         BMD
                     </button>
+
+                    <button
+                        class="report-nav-btn"
+                        onclick="showReportSection('deflection',this)">
+                        Deflection
+                    </button>
+
                 </div>
 
-                <!-- RESULT CONTENT -->
-                <div class="results-content">
+                <!-- SELECTION AREA -->
+                <div class="report-selection-panel">
 
-                    <!-- REACTIONS -->
-                    <div
-                        id="reactionTab"
-                        class="result-tab active-result-tab-content">
-                        <div id="reactionCard"></div>
-                        <div id="displacementCard"></div>
+                    <div class="report-selection-header">
+
+                        <h4 id="reportSelectionTitle">
+                            Nodes
+                        </h4>
+
+                        <button
+                            onclick="toggleCurrentSectionSelection()">
+                            Select All
+
+                        </button>
+
                     </div>
 
-                    <!-- MEMBER FORCES -->
                     <div
-                        id="memberForceTab"
-                        class="result-tab">
-                        <div id="memberForceCard"></div>
+                        id="reportSelectionContent"
+                        class="report-selection-content">
+
                     </div>
 
-                    <!-- DEFLECTION -->
-                    <div
-                        id="deflectionTab"
-                        class="result-tab">
-                        <div id="deflectionTable"></div>
+
+                    <div class="report-actions">
+                        <button onclick="generateReportPreview()">
+                            Generate Preview
+                        </button>
+
+                        <button onclick="exportReportPDF()">
+                            Export PDF
+                        </button>
                     </div>
 
-                    <!-- SFD -->
-                    <div
-                        id="sfdTab"
-                        class="result-tab">
-                        <div id="sfdTable"></div>
-                    </div>
-
-                    <!-- BMD -->
-                    <div
-                        id="bmdTab"
-                        class="result-tab">
-                        <div id="bmdTable"></div>
-                    </div>
                 </div>
+
             </div>
+
         </div>
 
     </div>
@@ -466,8 +609,15 @@
 
                 <h4>Structure View</h4>
 
+                <div class="structureHeaderActions">
+
+                <button id="resetBtn" onclick="resetView()">
+                    RESET VIEW
+                </button>
+
                 <!-- DIAGRAM MENU BUTTON -->
                 <div class="diagramMenuContainer">
+
                     <button
                         id="diagramMenuBtn"
                         class="diagramMenuBtn"
@@ -506,7 +656,7 @@
                                 <input
                                     type="number"
                                     id="bmdScaleInput"
-                                    value="4"
+                                    value="11"
                                     step="1"
                                     min="0"
                                     onchange="updateDiagramScale('bmd')"
@@ -578,24 +728,39 @@
                         </div>
                     </div>
                 </div>
+                </div>
             </div>
+
+            <div class="structureView">
             <canvas id="structureCanvas"></canvas>
+            </div>
+
+        </div>
+
+        <div
+            class="card report-preview-card"
+            id="reportPreviewCard">
+
+            <h4>Report Preview</h4>
+
+            <div id="reportPreview">
+                <div class="report-preview-placeholder">
+                    <div class="placeholder-icon">📄</div>
+                    <h3>Report Preview</h3>
+                    <p>
+                        Select the desired report contents from the left panel and
+                        click <strong>Generate Preview</strong> to view the report.
+                    </p>
+                </div>
+            </div>
         </div>
 
         <!-- ACTION BUTTONS -->
         <div id="actionButtonArea">
 
+            <button id="previousBtn" onclick="previousPage()">PREVIOUS</button>
+
             <button id="nextBtn" onclick="nextPage()">NEXT</button>
-
-            <button id="analyzeBtn"
-                onclick="analyzeAndShow();"
-                style="display:none;">
-                ANALYZE
-            </button>
-
-            <button onclick="resetView()">
-                RESET VIEW
-            </button>
 
         </div>
 
@@ -613,7 +778,11 @@
 
 <script src="{{ url_for('static', filename='js/navigation.js') }}"></script>
 
+<script src="{{ url_for('static', filename='js/report.js') }}"></script>
+
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 </body>
 </html>

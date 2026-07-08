@@ -12,7 +12,7 @@ window.diagramScales = {
 
     sfd : 8,
 
-    bmd : 4,
+    bmd : 11,
 
     deflection : 80
 };
@@ -1101,24 +1101,40 @@ function drawSFD(ctx,toCanvas,nodes,members){
         ctx.translate(x1,y1);
         ctx.rotate(angle);
 
-        ctx.beginPath();
-
         let scale = window.diagramScales.sfd;
 
-        // let firstV = d.V[0] * scale;
-        ctx.moveTo(0,0);
-
         let actualL = d.x[d.x.length-1];
-        
+
+        // Draw vertical ordinates
+        ctx.beginPath();
+
+        for(let j=0;j<d.x.length;j+=2){
+
+            let px = d.x[j] * L / actualL;
+            let py = -d.V[j] * scale;
+
+            ctx.moveTo(px,0);
+            ctx.lineTo(px,py);
+        }
+
+        ctx.strokeStyle = "rgba(0,0,255,0.25)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Draw shear diagram
+        ctx.beginPath();
+
+        ctx.moveTo(0,0)
         d.x.forEach((x,j)=>{
 
             let v = d.V[j] * scale;
 
             ctx.lineTo(x*L/actualL,-v);
         });
-
+        ctx.lineTo(L,0)
         ctx.strokeStyle = "blue";
 
+        ctx.lineWidth = 2;
         ctx.stroke();
 
         ctx.restore();
@@ -1155,13 +1171,30 @@ function drawBMD(ctx,toCanvas,nodes,members){
         ctx.translate(x1,y1);
         ctx.rotate(angle);
 
-        ctx.beginPath();
-
         let scale = window.diagramScales.bmd;
         let actualL = d.x[d.x.length-1];
-        let firstM = -d.M[0] * scale;
 
-        ctx.moveTo(0,-firstM);
+        // Draw vertical ordinates
+
+        ctx.beginPath();
+
+        for(let j=0;j<d.x.length;j+=2){
+
+            let px = d.x[j] * L / actualL;
+            let py = -d.M[j] * scale;
+
+            ctx.moveTo(px,0);
+            ctx.lineTo(px,-py);
+        }
+
+        ctx.strokeStyle = "rgba(0,150,0,0.25)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Draw moment diagram
+
+        ctx.beginPath();
+        ctx.moveTo(0,0);
 
         d.x.forEach((x,j)=>{
 
@@ -1170,8 +1203,10 @@ function drawBMD(ctx,toCanvas,nodes,members){
             ctx.lineTo(x*L/actualL,-mVal);
         });
 
-        ctx.strokeStyle = "green";
+        ctx.lineTo(L,0)
 
+        ctx.strokeStyle = "green";
+        ctx.lineWidth = 2;
         ctx.stroke();
 
         ctx.restore();
@@ -1369,6 +1404,23 @@ function toggleDiagramMenu(){
     else{popup.style.display = "block";}
 }
 
+document.addEventListener("click", function(e){
+
+    const popup = document.getElementById("diagramMenuPopup");
+    const button = document.getElementById("diagramMenuBtn");
+
+    if(!popup || !button) return;
+
+    // If click is outside both the popup and the menu button
+    if(
+        !popup.contains(e.target) &&
+        !button.contains(e.target)
+    ){
+        popup.style.display = "none";
+    }
+
+});
+
 // =============================================
 // UPDATE SCALE FROM INPUT
 // =============================================
@@ -1443,7 +1495,7 @@ function resetDiagramScales(){
 
         sfd : 8,
 
-        bmd : 4,
+        bmd : 11,
 
         deflection : 80
     };
@@ -1458,7 +1510,7 @@ function resetDiagramScales(){
 
     document.getElementById(
         "bmdScaleInput"
-    ).value = 4;
+    ).value = 11;
 
 
 

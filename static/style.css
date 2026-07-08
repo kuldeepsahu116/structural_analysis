@@ -59,7 +59,7 @@ body{
 
 .right-panel{
     width:50%;
-    display:flex;
+    display:grid;
     flex-direction:column;
     height:100%;
     gap:10px;
@@ -70,11 +70,39 @@ body{
     flex:1;
     display:flex;
     flex-direction:column;
+    min-height: 0;
 }
+
 
 .structureView{
 
     position:relative;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+
+#structureCanvas{
+    width:100%;
+    height:100%;
+    flex: 1;
+    display: block;
+    border:1px solid #ccc;
+    background:#fafafa;
+    box-sizing: border-box;
+}
+
+
+.right-panel{
+    width:50%;
+    display:flex;
+    flex-direction:column;
+    height:100%;
+    gap:10px;
+
+    min-height:0;
 }
 /* =====================================================
    5. PAGE 1 GRID (Instruction + Nodes)
@@ -228,16 +256,6 @@ button:active{
 }
 
 /* =====================================================
-   10. STRUCTURE CANVAS
-===================================================== */
-#structureCanvas{
-    width:100%;
-    height:100%;
-    border:1px solid #ccc;
-    background:#fafafa;
-}
-
-/* =====================================================
    11. ACTION BUTTON AREA
 ===================================================== */
 #actionButtonArea{
@@ -296,7 +314,9 @@ button:active{
 
     gap:20px;
 
-    height:100%;
+    flex:1;
+
+    min-height:0;
 }
 
 
@@ -384,7 +404,7 @@ button:active{
 
     border-radius:10px;
 
-    padding:20px;
+    padding:10px;
 
     overflow:auto;
 
@@ -396,6 +416,33 @@ button:active{
     box-shadow: 0 8px 20px rgba(0,0,0,0.12);
 }
 
+
+.results-column{
+
+    display:flex;
+
+    flex-direction:column;
+
+    height:100%;
+
+    gap:10px;
+}
+
+.results-actions{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    min-height:20px;
+}
+
+.results-actions button{
+
+    width:140px;
+}
 
 /* =====================================================
    TAB
@@ -584,8 +631,10 @@ button:active{
 
     display:none;
 
-    justify-content:center;
+    justify-content:flex-start;
     align-items:center;
+
+    padding-left:1%;
 
     z-index:1000;
 }
@@ -617,6 +666,68 @@ button:active{
     flex-direction:column;
 
     gap:10px;
+}
+
+/* ========================================= */
+/* POPUP CLOSE BUTTON */
+/* ========================================= */
+
+.popup-card{
+
+    position:relative;
+}
+
+.popup-close-btn{
+
+    position:absolute;
+
+    top:12px;
+
+    right:12px;
+
+    width:28px;
+
+    height:28px;
+
+    padding:0;
+
+    margin:0;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#e74c3c;
+
+    color:white;
+
+    font-size:20px;
+
+    font-weight:bold;
+
+    line-height:1;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    cursor:pointer;
+
+    transition:0.2s;
+}
+
+.popup-close-btn:hover{
+
+    background:#c0392b;
+
+    transform:scale(1.08);
+}
+
+.popup-close-btn:active{
+
+    transform:scale(0.95);
 }
 
 /* =====================================================
@@ -759,9 +870,9 @@ button:active{
 /* ========================================= */
 
 .diagramMenuContainer{
+
     position:relative;
-    top:-2px;
-    right:12px;
+
     z-index:1000;
 }
 
@@ -835,8 +946,17 @@ button:active{
     display:flex;
     justify-content:space-between;
     align-items:flex-start;
-    position:relative;
+    align-items:center;
     margin-bottom:6px;
+}
+
+.structureHeaderActions{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
 }
 
 .diagramMenuHeader{
@@ -893,4 +1013,454 @@ button:active{
     border:none;
     border-radius:6px;
     cursor:pointer;
+}
+
+/* ========================================= */
+/* Report Preview card */
+/* ========================================= */
+
+.report-preview-card{
+
+    flex:1;
+
+    min-height:0;
+
+    display:flex;
+
+    flex-direction:column;
+
+    overflow:hidden;
+}
+
+.report-preview{
+    padding-bottom:30px;
+    box-sizing:border-box;
+}
+
+#reportPreview{
+
+    flex:1;
+
+    height: 87%;
+
+    min-height:0;
+
+    overflow-y:scroll;
+
+    overflow-x:auto;
+
+    padding:15px;
+
+    padding-bottom:24px;
+
+    border:1px solid #ddd;
+
+    background:white;
+
+    display:block;
+}
+
+/* Scrollbar */
+#reportPreview::-webkit-scrollbar{
+    width:10px;
+}
+
+#reportPreview::-webkit-scrollbar-track{
+    background:#f1f1f1;
+}
+
+#reportPreview::-webkit-scrollbar-thumb{
+    background:#888;
+    border-radius:5px;
+}
+
+#reportPreview::-webkit-scrollbar-thumb:hover{
+    background:#555;
+}
+
+/* ========================================= */
+/* REPORT LAYOUT */
+/* ========================================= */
+
+.report-layout{
+
+    display:flex;
+
+    gap:20px;
+
+    height:100%;
+
+    min-height:0;
+}
+
+
+
+/* ========================================= */
+/* REPORT SIDEBAR */
+/* ========================================= */
+
+.report-sidebar{
+
+    width:22%;
+
+    background:white;
+
+    border-radius:10px;
+
+    padding:15px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+
+
+
+/* ========================================= */
+/* REPORT NAV BUTTON */
+/* ========================================= */
+
+.report-nav-btn{
+
+    background:#799df7;
+
+    border:none;
+
+    padding:10px;
+
+    border-radius:8px;
+
+    text-align:left;
+
+    cursor:pointer;
+
+    font-weight:600;
+}
+
+
+
+.report-nav-btn:hover{
+
+    background:#18398d;
+}
+
+
+.report-select-nav-btn{
+
+    background:#799df7;
+
+    border:none;
+
+    padding:6px;
+
+    border-radius:4px;
+
+    text-align:left;
+
+    cursor:pointer;
+
+    font-weight:600;
+}
+
+
+.report-select-nav-btn:hover{
+
+    background:#18398d;
+}
+
+.report-select-nav-btn.active{
+
+    background:#18398d;
+
+    color:white;
+}
+
+
+.active-report-tab{
+
+    background:#18398d;
+
+    color:white;
+}
+
+
+
+/* ========================================= */
+/* SELECTION PANEL */
+/* ========================================= */
+
+.report-selection-panel{
+
+    flex:1;
+
+    background:white;
+
+    border-radius:10px;
+
+    padding:15px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+
+
+
+/* HEADER */
+
+.report-selection-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding-bottom:10px;
+
+    border-bottom:1px solid #ddd;
+}
+
+
+
+/* CONTENT */
+
+.report-selection-content{
+
+    flex:1;
+
+    overflow:auto;
+
+    margin-top:15px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:8px;
+}
+
+
+
+/* ROW */
+
+.report-item{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:flex-start;
+
+    gap:10px;
+
+    padding:8px 12px;
+
+    border-radius:6px;
+
+    cursor:pointer;
+}
+
+
+
+.report-item:hover{
+
+    background:#f5f8ff;
+}
+
+.report-item input[type="checkbox"]{
+
+    width:18px;
+
+    height:18px;
+
+    margin:0;
+
+    flex-shrink:0;
+}
+
+.report-actions{
+
+    margin-top:auto;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:8px;
+}
+
+.report-preview-panel{
+
+    flex:1;
+
+    background:white;
+
+    border-radius:10px;
+
+    padding:20px;
+
+    overflow:auto;
+}
+
+/* ========================================= */
+/* REPORT TABLE */
+/* ========================================= */
+
+/* ========================================= */
+/* REPORT PREVIEW */
+/* ========================================= */
+
+.report-preview-placeholder{
+
+    height:100%;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-align:center;
+
+    color:#666;
+
+    padding:40px;
+
+    box-sizing:border-box;
+}
+
+.placeholder-icon{
+
+    font-size:64px;
+
+    margin-bottom:20px;
+
+    opacity:0.7;
+}
+
+.report-preview-placeholder h3{
+
+    color:#2947A3;
+
+    margin-bottom:12px;
+
+    font-size:24px;
+}
+
+.report-preview-placeholder p{
+
+    max-width:420px;
+
+    line-height:1.6;
+
+    font-size:15px;
+
+    color:#777;
+}
+
+.report-preview-placeholder strong{
+
+    color:#2947A3;
+}
+
+
+.report-preview{
+    font-family: "Segoe UI", Arial, sans-serif;
+    color:#222;
+    font-size:12px;
+}
+
+/* Main Title */
+.report-preview h1{
+    font-size:26px;
+    margin:0 0 10px;
+    font-weight:700;
+    page-break-after: avoid;
+}
+
+.report-preview hr{
+    margin:10px 0 20px;
+    page-break-after: avoid;
+}
+
+/* Section Heading */
+.report-preview h2{
+    font-size:18px;
+    color:#1f3c88;
+    margin:18px 0 8px;
+    padding-bottom:4px;
+    border-bottom:2px solid #2952cc;
+    page-break-after: avoid;
+}
+
+/* ========================================= */
+/* REPORT TABLE */
+/* ========================================= */
+
+.report-table{
+    width:100%;
+    border-collapse:collapse;
+    margin:12px 0 20px;
+    font-size:11px;
+    border-radius:6px;
+    overflow:hidden;
+    box-shadow:0 1px 4px rgba(0,0,0,0.08);
+}
+
+.report-table th{
+    background:#2952cc;
+    color:#fff;
+    padding:8px 10px;
+    font-size:11px;
+    font-weight:600;
+    text-align:center;
+}
+
+.report-table td{
+    padding:7px 10px;
+    text-align:center;
+    border-bottom:1px solid #e5e5e5;
+}
+
+.report-table tr:nth-child(even){
+    background:#f8f9fc;
+}
+
+.report-table tr:last-child td{
+    border-bottom:none;
+}
+
+/* Allow tables to span multiple pages */
+.report-table{
+    width:100%;
+    border-collapse:collapse;
+    page-break-inside:auto;
+    break-inside:auto;
+}
+
+/* Repeat header on every page */
+.report-table thead{
+    display:table-header-group;
+}
+
+/* Never split a row */
+.report-table tr{
+    page-break-inside:avoid;
+    break-inside:avoid;
+}
+
+/* Keep heading with beginning of table */
+.report-preview h2{
+    page-break-after:avoid;
+    break-after:avoid;
+    margin-bottom:8px;
 }

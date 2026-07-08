@@ -1,5 +1,5 @@
-// #region =====================================================
-// NODE INPUT
+
+// #region  NODE INPUT
 // =====================================================
 
 function addNode(id="", x="", y=""){
@@ -44,10 +44,7 @@ function addNode(id="", x="", y=""){
 
 // #endregion
 
-
-
-// #region =====================================================
-// MEMBER INPUT
+// #region MEMBER INPUT
 // =====================================================
 
 function addMember(
@@ -105,10 +102,7 @@ function addMember(
 
 // #endregion
 
-
-
-// #region =====================================================
-// SUPPORT INPUT
+// #region SUPPORT INPUT
 // =====================================================
 
 function addSupport(node="", ux=false, uy=false, rz=false){
@@ -160,8 +154,7 @@ function addSupport(node="", ux=false, uy=false, rz=false){
 
 // #endregion
 
-// #region =====================================================
-// DELETE ROW
+// #region DELETE ROW
 // =====================================================
 
 function deleteRow(btn){
@@ -173,8 +166,7 @@ function deleteRow(btn){
 
 // #endregion
 
-// #region =====================================================
-// LOAD POPUP SYSTEM
+// #region LOAD POPUP SYSTEM
 // =====================================================
 
 let loadDatabase = [];
@@ -808,7 +800,7 @@ function updateLoadInstructions(){
                 <b>Sign Convention</b><br>
                 Negative → Downward on local Y direction
                 <br><br>
-                <b>Uniformly Distributed Load</b><br>
+                <b>UDL</b><br>
                 Uniformly distributed load intensity in kN/m.
             `;
         }
@@ -822,7 +814,7 @@ function updateLoadInstructions(){
                 <b>Sign Convention</b><br>
                 Negative → Downward on local Y direction
                 <br><br>
-                <b>Uniformly Distributed Load</b><br>
+                <b>UDL</b><br>
                 Uniformly distributed load intensity in kN/m.
                 <br><br>
                 <b>a</b><br>
@@ -842,10 +834,10 @@ function updateLoadInstructions(){
                 <b>Sign Convention</b><br>
                 Negative → Downward on local Y direction
                 <br><br>
-                <b>Value 1</b><br>
+                <b>Start Load</b><br>
                 Load intensity at start node in kN/m.
                 <br><br>
-                <b>Value 2</b><br>
+                <b>End Load</b><br>
                 Load intensity at end node in kN/m.
             `;
         }
@@ -900,10 +892,8 @@ function deleteLoad(index){
 
 // #endregion
 
-// //#region -----------------------------------------------------
-// EDIT LOAD
+// #region EDIT LOAD
 // -----------------------------------------------------
-
 let editingLoadIndex = -1;
 
 function editLoad(index){
@@ -956,8 +946,7 @@ function editLoad(index){
 
 // #endregion
 
-// //#region -----------------------------------------------------
-// ASSIGN LOAD
+// #region  ASSIGN LOAD
 // -----------------------------------------------------
 
 function assignLoad(index){
@@ -992,9 +981,9 @@ function assignLoad(index){
     refreshView();
 }
 
+// #endregion
 
-// #region =====================================================
-// RESULT TAB SWITCHING
+// #region RESULT TAB SWITCHING
 // =====================================================
 
 function showResultTab(tabName,btn){
