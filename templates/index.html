@@ -3,11 +3,89 @@
 <head>
     <title>Frame Structural Analyzer</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon"
+      type="image/png"
+      href="{{ url_for('static', filename='images/logo.png') }}">
 </head>
 
 <body>
 
-<div class="header">FRAME STRUCTURAL ANALYZER</div>
+<div class="header">
+
+    <div class="header-left">
+
+        <img
+            src="{{ url_for('static', filename='images/header_logo.png') }}"
+            class="header-logo"
+            alt="Logo">
+
+        <span class="header-title">
+            FRAME STRUCTURAL ANALYZER
+        </span>
+
+    </div>
+
+    <div class="header-right">
+        <button
+            id="infoBtn"
+            class="info-btn"
+            onclick="openInfoPopup()"
+            title="About">
+
+            ⓘ
+
+        </button>
+    </div>
+
+</div>
+
+<div id="infoPopupOverlay" class="info-popup-overlay">
+
+    <div class="infoPopup">
+
+        <div class="infoPopupHeader">
+
+            <h3>Information</h3>
+
+            <button
+                class="info-popup-close-btn"
+                onclick="closeInfoPopup()">
+                &times;
+            </button>
+        </div>
+
+        <h2>Frame Structural Analyzer</h2>
+
+        <p><b>Version:</b> 1.0.0</p>
+
+        <h3>About</h3>
+
+        <p>
+            Frame Structural Analyzer is a web-based application
+            for analysing 2D frame structures and visualising
+            structural behaviour through diagrams and reports.
+        </p>
+
+        <h3>Developer</h3>
+
+        <p>
+            <b>Kuldeep Sahu</b><br>
+            Civil Engineering Student
+        </p>
+
+        <h3>Technologies</h3>
+
+        <ul>
+            <li>Python</li>
+            <li>Flask</li>
+            <li>HTML</li>
+            <li>CSS</li>
+            <li>JavaScript</li>
+        </ul>
+
+    </div>
+
+</div>
 
 <!-- NAVIGATION -->
 <div class="nav-bar">

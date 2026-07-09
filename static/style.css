@@ -12,9 +12,205 @@ body{
 ===================================================== */
 .header{
     background:linear-gradient(90deg,#1f3c88,#2952cc);
+    display:flex;
+    padding: 0 16px;
+    align-items:center;
+    height:60px;
+
+}
+
+.header-left{
+
+    display:flex;
+
+    justify-content: left;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+.header-title{
+
     color:white;
-    text-align:center;
-    padding:20px;
+
+    font-size:20px;
+}
+
+.header-logo{
+
+    height:35px;
+
+    width:auto;
+
+}
+
+.header-right{
+
+    margin-left: auto;
+
+    display:flex;
+
+    justify-content: right;
+
+    align-items:center;
+
+    padding-right: 16px;
+
+}
+
+.info-btn{
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width:38px;
+    height:38px;
+    border:none;
+    border-radius:50%;
+    background:rgba(255,255,255,0.15);
+    color:white;
+    font-size:20px;
+
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.info-btn:hover{
+
+    background:rgba(255,255,255,0.25);
+
+    transform: scale(1.08);
+
+}
+
+.infoPopup{
+
+    position:absolute;
+
+    top:60px;
+
+    right:16px;
+
+    width:320px;
+
+    height:540px;
+
+    overflow-y:auto;
+
+    background:white;
+
+    border-radius:10px;
+
+    padding:0px 18px;
+
+    box-shadow:0 8px 24px rgba(0,0,0,0.18);
+}
+
+.info-popup-overlay{
+
+    position:fixed;
+
+    display:none;
+
+    inset: 0;
+
+    background:transparent;
+
+    z-index: 9998;
+
+}
+
+.infoPopupHeader{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:8px;
+}
+
+.infoPopupHeader h3{
+
+    margin:0;
+
+    color:#1f3c88;
+
+    font-size:20px;
+}
+
+.infoPopup h2{
+
+    margin:0 0 8px;
+
+    font-size:24px;
+
+    color:#1f3c88;
+}
+
+.infoPopup h3{
+
+    margin:18px 0 6px;
+
+    font-size:18px;
+}
+
+.infoPopup p{
+
+    margin:4px 0 10px;
+
+    line-height:1.5;
+}
+
+.infoPopup ul{
+
+    margin:6px 0 12px 20px;
+
+    padding:0;
+}
+
+.infoPopup li{
+
+    margin:3px 0;
+}
+
+.info-popup-close-btn{
+
+    width:20px;
+
+    height:20px;
+
+    padding:0;
+
+    margin:0;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#e74c3c;
+
+    color:white;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    cursor:pointer;
+
+    transition:0.2s;
+
+    flex-shrink:0;
 }
 
 /* =====================================================

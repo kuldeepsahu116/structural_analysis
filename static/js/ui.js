@@ -1,3 +1,16 @@
+function openInfoPopup(){
+
+    document.getElementById("infoPopupOverlay").style.display="flex";
+
+}
+
+function closeInfoPopup(){
+
+    document.getElementById("infoPopupOverlay").style.display="none";
+
+}
+
+
 
 // #region  NODE INPUT
 // =====================================================
