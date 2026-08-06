@@ -1,0 +1,54 @@
+/* ==========================================================
+   PAGE1.CSS
+   Model Page (Instructions, Nodes & Members)
+   ========================================================== */
+
+
+/* ==========================================================
+   1. INSTRUCTION CARD
+   ========================================================== */
+
+.instruction-card{
+    font-size:12px;
+    line-height:1.4;
+}
+
+
+/* ==========================================================
+   2. INSTRUCTION SECTIONS
+   ========================================================== */
+
+.instruction-section{
+    margin-bottom:4px;
+}
+
+
+/* ==========================================================
+   3. MINI TABLE
+   ========================================================== */
+
+.mini-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:3px;
+}
+
+.mini-table td{
+    padding:2px 4px;
+    border-bottom:1px solid #eee;
+    font-size:11px;
+}
+
+
+/* ==========================================================
+   4. INSTRUCTION TEXT
+   ========================================================== */
+
+.instruction-card p{
+    margin:2px 0;
+}
+
+.instruction-card ul{
+    padding-left:15px;
+    margin:4px 0;
+}

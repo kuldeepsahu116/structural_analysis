@@ -27,7 +27,7 @@ function showPage(n){
 
         reportCard.style.display = "block";
 
-        populateReportSelection();
+        changeReportStyle();
     }
     else{
 

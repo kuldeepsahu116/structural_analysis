@@ -562,112 +562,202 @@
         <div class="page" id="page4" style="display:none;">
 
             <div class="report-layout">
-                
-                <!-- SIDEBAR -->
-                <div class="report-sidebar">
 
-                    <button
-                        class="report-select-nav-btn"
-                        onclick="toggleSelectAllReport()">
-                        Select All
-                    </button>                    
+                <div class="report-left">
 
-                    <button
-                        class="report-nav-btn active-report-tab"
-                        onclick="showReportSection('nodes',this)">
-                        Nodes
-                    </button>
-
-                    <button
-                        class="report-nav-btn"
-                        onclick="showReportSection('members',this)">
-                        Members
-                    </button>
-
-                    <button
-                        class="report-nav-btn"
-                        onclick="showReportSection('supports',this)">
-                        Supports
-                    </button>
-
-                    <button
-                        class="report-nav-btn"
-                        onclick="showReportSection('loads',this)">
-                        Loads
-                    </button>
-
-                    <button
-                        class="report-nav-btn"
-                        onclick="showReportSection('reactions',this)">
-                        Reactions
-                    </button>
-
-                    <button
-                        class="report-nav-btn"
-                        onclick="showReportSection('displacements',this)">
-                        Displacements
-                    </button>
-
-                    <button
-                        class="report-nav-btn"
-                        onclick="showReportSection('forces',this)">
-                        Member Forces
-                    </button>
-
-                    <button
-                        class="report-nav-btn"
-                        onclick="showReportSection('sfd',this)">
-                        SFD
-                    </button>
-
-                    <button
-                        class="report-nav-btn"
-                        onclick="showReportSection('bmd',this)">
-                        BMD
-                    </button>
-
-                    <button
-                        class="report-nav-btn"
-                        onclick="showReportSection('deflection',this)">
-                        Deflection
-                    </button>
-
-                </div>
-
-                <!-- SELECTION AREA -->
-                <div class="report-selection-panel">
-
-                    <div class="report-selection-header">
-
-                        <h4 id="reportSelectionTitle">
-                            Nodes
-                        </h4>
-
-                        <button
-                            onclick="toggleCurrentSectionSelection()">
-                            Select All
-
-                        </button>
-
+                    <div class="report-style">
+                        <label>
+                            <input
+                                type="radio"
+                                name="reportStyle"
+                                value="tabular"
+                                checked
+                                onchange="changeReportStyle()">
+                            Tabular Report
+                        </label>
+                        <label>
+                            <input
+                                type="radio"
+                                name="reportStyle"
+                                value="member"
+                                onchange="changeReportStyle()">
+                            Member-Wise Report
+                        </label>
                     </div>
 
-                    <div
-                        id="reportSelectionContent"
-                        class="report-selection-content">
+                    <div class="report-bottom">
+                    
+                        <!-- LEFT SIDEBAR -->
+                        <div class="report-sidebar" id="reportSidebar">
 
+                            <!-- TABULAR REPORT SIDEBAR -->
+                            <div id="tabularSidebar">
+
+                                <label class="report-select-all">
+                                    <input
+                                        type="checkbox"
+                                        id="reportSelectAll"
+                                        onchange="toggleSelectAllReport()">
+                                    <span>Select All Sections</span>
+                                </label>                   
+
+                                <button
+                                    class="report-nav-btn active-report-tab"
+                                    onclick="showReportSection('nodes',this)">
+                                    Nodes
+                                </button>
+
+                                <button
+                                    class="report-nav-btn"
+                                    onclick="showReportSection('members',this)">
+                                    Members
+                                </button>
+
+                                <button
+                                    class="report-nav-btn"
+                                    onclick="showReportSection('supports',this)">
+                                    Supports
+                                </button>
+
+                                <button
+                                    class="report-nav-btn"
+                                    onclick="showReportSection('loads',this)">
+                                    Loads
+                                </button>
+
+                                <button
+                                    class="report-nav-btn"
+                                    onclick="showReportSection('reactions',this)">
+                                    Reactions
+                                </button>
+
+                                <button
+                                    class="report-nav-btn"
+                                    onclick="showReportSection('displacements',this)">
+                                    Displacements
+                                </button>
+
+                                <button
+                                    class="report-nav-btn"
+                                    onclick="showReportSection('forces',this)">
+                                    Member Forces
+                                </button>
+
+                                <button
+                                    class="report-nav-btn"
+                                    onclick="showReportSection('sfd',this)">
+                                    SFD
+                                </button>
+
+                                <button
+                                    class="report-nav-btn"
+                                    onclick="showReportSection('bmd',this)">
+                                    BMD
+                                </button>
+
+                                <button
+                                    class="report-nav-btn"
+                                    onclick="showReportSection('deflection',this)">
+                                    Deflection
+                                </button>
+
+                            </div>
+
+                            <!-- MEMBER WISE REPORT SIDEBAR -->
+                            <div id="memberSidebar">
+
+                                <label class="report-select-all">
+                                    <input
+                                        type="checkbox" checked
+                                        id="memberContentSelectAll"
+                                        onchange="toggleReportMemberContentSelection()">
+
+                                    <span>Select All Contents</span>
+                                </label>
+
+                                <label class="member-report-chkbox">
+                                    <input type="checkbox" checked id="chkGeometry"
+                                    onchange="updateMemberContentSelectAll()">
+                                    Geometry
+                                </label>
+
+                                <label class="member-report-chkbox">
+                                    <input type="checkbox" checked id="chkLoads"
+                                    onchange="updateMemberContentSelectAll()">
+                                    Applied Loads
+                                </label>
+
+                                <label class="member-report-chkbox">
+                                    <input type="checkbox" checked id="chkForces"
+                                    onchange="updateMemberContentSelectAll()">
+                                    End Forces
+                                </label>
+
+                                <label class="member-report-chkbox">
+                                    <input type="checkbox" checked id="chkMaximum"
+                                    onchange="updateMemberContentSelectAll()">
+                                    Maximum Values
+                                </label>
+
+                                <label class="member-report-chkbox">
+                                    <input type="checkbox" checked id="chkSFD"
+                                    onchange="updateMemberContentSelectAll()">
+                                    SFD
+                                </label>
+
+                                <label class="member-report-chkbox">
+                                    <input type="checkbox" checked id="chkBMD"
+                                    onchange="updateMemberContentSelectAll()">
+                                    BMD
+                                </label>
+
+                                <label class="member-report-chkbox">
+                                    <input type="checkbox" checked id="chkDeflection"
+                                    onchange="updateMemberContentSelectAll()">
+                                    Deflection Diagram
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                        <!-- SELECTION AREA -->
+                        <div class="report-selection-panel">
+
+                            <div class="report-selection-header">
+
+                                <h4 id="reportSelectionTitle">
+                                    Nodes
+                                </h4>
+
+                                <button
+                                    id="reportSelectionButton"
+                                    onclick="toggleCurrentSectionSelection()">
+                                    Select All
+
+                                </button>
+
+                            </div>
+
+                            <div
+                                id="reportSelectionContent"
+                                class="report-selection-content">
+
+                            </div>
+
+
+                            <div class="report-actions">
+                                <button onclick="generateReportPreview()">
+                                    Generate Preview
+                                </button>
+
+                                <button onclick="exportReportPDF()">
+                                    Export PDF
+                                </button>
+                            </div>
+
+                        </div>
                     </div>
-
-
-                    <div class="report-actions">
-                        <button onclick="generateReportPreview()">
-                            Generate Preview
-                        </button>
-
-                        <button onclick="exportReportPDF()">
-                            Export PDF
-                        </button>
-                    </div>
-
                 </div>
 
             </div>

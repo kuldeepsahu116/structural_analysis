@@ -1071,6 +1071,103 @@ function setDiagram(type){
 }
 //#endregion
 
+function drawReportMemberAxis(
+    ctx,
+    toCanvas,
+    nodes,
+    member
+){
+
+    let n1 = nodes[member.start];
+    let n2 = nodes[member.end];
+
+    if(!n1 || !n2) return;
+
+    let [x1,y1] = toCanvas(n1[0],n1[1]);
+    let [x2,y2] = toCanvas(n2[0],n2[1]);
+
+    // ==========================
+    // Beam Axis
+    // ==========================
+
+    ctx.beginPath();
+
+    ctx.moveTo(x1,y1);
+
+    ctx.lineTo(x2,y2);
+
+    ctx.strokeStyle = "#444";
+
+    ctx.lineWidth = 3;
+
+    ctx.stroke();
+
+    // ==========================
+    // Start Node
+    // ==========================
+
+    ctx.beginPath();
+
+    ctx.arc(x1,y1,5,0,2*Math.PI);
+
+    ctx.fillStyle = "#e74c3c";
+
+    ctx.fill();
+
+    // ==========================
+    // End Node
+    // ==========================
+
+    ctx.beginPath();
+
+    ctx.arc(x2,y2,5,0,2*Math.PI);
+
+    ctx.fill();
+
+    // ==========================
+    // Member Label
+    // ==========================
+
+    let mx = (x1+x2)/2;
+
+    let my = (y1+y2)/2 - 18;
+
+    ctx.fillStyle = "#1f3c88";
+
+    ctx.font = "bold 16px Segoe UI";
+
+    ctx.textAlign = "center";
+
+    ctx.fillText(
+        "Member " + member.name,
+        mx,
+        my
+    );
+
+    // ==========================
+    // Node Labels
+    // ==========================
+
+    ctx.fillStyle = "#222";
+
+    ctx.font = "13px Segoe UI";
+
+    ctx.textAlign = "center";
+
+    ctx.fillText(
+        member.start,
+        x1,
+        y1 + 20
+    );
+
+    ctx.fillText(
+        member.end,
+        x2,
+        y2 + 20
+    );
+
+}
+
 
 //#region ====================================================
 // SFD Drawing
@@ -1079,66 +1176,89 @@ function drawSFD(ctx,toCanvas,nodes,members){
 
     let data = window.analysisResults.sfd;
 
-    data.forEach((d,i)=>{
+    members.forEach((member,i)=>{
 
-        let m = members[i];
+        drawMemberSFD(
+            ctx,
+            toCanvas,
+            nodes,
+            member,
+            data[i]
+        );
 
-        let n1 = nodes[m.start];
-        let n2 = nodes[m.end];
-
-        let [x1,y1] = toCanvas(n1[0],n1[1]);
-        let [x2,y2] = toCanvas(n2[0],n2[1]);
-
-        let dx = x2-x1;
-        let dy = y2-y1;
-
-        let L = Math.sqrt(dx*dx+dy*dy);
-
-        let angle = Math.atan2(dy,dx);
-
-        ctx.save();
-
-        ctx.translate(x1,y1);
-        ctx.rotate(angle);
-
-        let scale = window.diagramScales.sfd;
-
-        let actualL = d.x[d.x.length-1];
-
-        // Draw vertical ordinates
-        ctx.beginPath();
-
-        for(let j=0;j<d.x.length;j+=2){
-
-            let px = d.x[j] * L / actualL;
-            let py = -d.V[j] * scale;
-
-            ctx.moveTo(px,0);
-            ctx.lineTo(px,py);
-        }
-
-        ctx.strokeStyle = "rgba(0,0,255,0.25)";
-        ctx.lineWidth = 1;
-        ctx.stroke();
-
-        // Draw shear diagram
-        ctx.beginPath();
-
-        ctx.moveTo(0,0)
-        d.x.forEach((x,j)=>{
-
-            let v = d.V[j] * scale;
-
-            ctx.lineTo(x*L/actualL,-v);
-        });
-        ctx.lineTo(L,0)
-        ctx.strokeStyle = "blue";
-
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        ctx.restore();
     });
+}
+
+function drawMemberSFD(
+    ctx,
+    toCanvas,
+    nodes,
+    member,
+    diagram
+){
+
+    let n1 = nodes[member.start];
+    let n2 = nodes[member.end];
+
+    let [x1,y1] = toCanvas(n1[0],n1[1]);
+    let [x2,y2] = toCanvas(n2[0],n2[1]);
+
+    let dx = x2-x1;
+    let dy = y2-y1;
+
+    let L = Math.sqrt(dx*dx+dy*dy);
+
+    let angle = Math.atan2(dy,dx);
+
+    ctx.save();
+
+    ctx.translate(x1,y1);
+
+    ctx.rotate(angle);
+
+    let scale = window.diagramScales.sfd;
+
+    let actualL = diagram.x[diagram.x.length-1];
+
+    ctx.beginPath();
+
+    for(let j=0;j<diagram.x.length;j+=2){
+
+        let px = diagram.x[j]*L/actualL;
+
+        let py = -diagram.V[j]*scale;
+
+        ctx.moveTo(px,0);
+
+        ctx.lineTo(px,py);
+
+    }
+
+    ctx.strokeStyle="rgba(0,0,255,0.25)";
+    ctx.lineWidth=1;
+    ctx.stroke();
+
+    ctx.beginPath();
+
+    ctx.moveTo(0,0);
+
+    diagram.x.forEach((x,j)=>{
+
+        ctx.lineTo(
+            x*L/actualL,
+            -diagram.V[j]*scale
+        );
+
+    });
+
+    ctx.lineTo(L,0);
+
+    ctx.strokeStyle="blue";
+    ctx.lineWidth=2;
+    ctx.stroke();
+
+    ctx.restore();
+
 }
 //#endregion
 
@@ -1149,68 +1269,79 @@ function drawBMD(ctx,toCanvas,nodes,members){
 
     let data = window.analysisResults.bmd;
 
-    data.forEach((d,i)=>{
+    members.forEach((member,i)=>{
 
-        let m = members[i];
-
-        let n1 = nodes[m.start];
-        let n2 = nodes[m.end];
-
-        let [x1,y1] = toCanvas(n1[0],n1[1]);
-        let [x2,y2] = toCanvas(n2[0],n2[1]);
-
-        let dx = x2-x1;
-        let dy = y2-y1;
-
-        let L = Math.sqrt(dx*dx+dy*dy);
-
-        let angle = Math.atan2(dy,dx);
-
-        ctx.save();
-
-        ctx.translate(x1,y1);
-        ctx.rotate(angle);
-
-        let scale = window.diagramScales.bmd;
-        let actualL = d.x[d.x.length-1];
-
-        // Draw vertical ordinates
-
-        ctx.beginPath();
-
-        for(let j=0;j<d.x.length;j+=2){
-
-            let px = d.x[j] * L / actualL;
-            let py = -d.M[j] * scale;
-
-            ctx.moveTo(px,0);
-            ctx.lineTo(px,-py);
-        }
-
-        ctx.strokeStyle = "rgba(0,150,0,0.25)";
-        ctx.lineWidth = 1;
-        ctx.stroke();
-
-        // Draw moment diagram
-
-        ctx.beginPath();
-        ctx.moveTo(0,0);
-
-        d.x.forEach((x,j)=>{
-
-            let mVal = -d.M[j] * scale;
-
-            ctx.lineTo(x*L/actualL,-mVal);
-        });
-
-        ctx.lineTo(L,0)
-
-        ctx.strokeStyle = "green";
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        ctx.restore();
+        drawMemberBMD(
+            ctx,
+            toCanvas,
+            nodes,
+            member,
+            data[i]
+        );
     });
+}
+
+function drawMemberBMD(ctx,toCanvas,nodes,member,d){
+
+    let m = member;
+
+    let n1 = nodes[m.start];
+    let n2 = nodes[m.end];
+
+    let [x1,y1] = toCanvas(n1[0],n1[1]);
+    let [x2,y2] = toCanvas(n2[0],n2[1]);
+
+    let dx = x2-x1;
+    let dy = y2-y1;
+
+    let L = Math.sqrt(dx*dx+dy*dy);
+
+    let angle = Math.atan2(dy,dx);
+
+    ctx.save();
+
+    ctx.translate(x1,y1);
+    ctx.rotate(angle);
+
+    let scale = window.diagramScales.bmd;
+    let actualL = d.x[d.x.length-1];
+
+    // Draw vertical ordinates
+
+    ctx.beginPath();
+
+    for(let j=0;j<d.x.length;j+=2){
+
+        let px = d.x[j] * L / actualL;
+        let py = -d.M[j] * scale;
+
+        ctx.moveTo(px,0);
+        ctx.lineTo(px,-py);
+    }
+
+    ctx.strokeStyle = "rgba(0,150,0,0.25)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Draw moment diagram
+
+    ctx.beginPath();
+    ctx.moveTo(0,0);
+
+    d.x.forEach((x,j)=>{
+
+        let mVal = -d.M[j] * scale;
+
+        ctx.lineTo(x*L/actualL,-mVal);
+    });
+
+    ctx.lineTo(L,0)
+
+    ctx.strokeStyle = "green";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.restore();
 }
 
 //#endregion
@@ -1222,57 +1353,72 @@ function drawDeflection(ctx,toCanvas,nodes,members){
 
     let data = window.analysisResults.deflection_shapes;
 
-    data.forEach((d,i)=>{
+    members.forEach((member,i)=>{
 
-        let m = members[i];
-
-        let n1 = nodes[m.start];
-        let n2 = nodes[m.end];
-
-        let [x1,y1] = toCanvas(n1[0],n1[1]);
-        let [x2,y2] = toCanvas(n2[0],n2[1]);
-
-        let dx = x2-x1;
-        let dy = y2-y1;
-
-        let L = Math.sqrt(dx*dx+dy*dy);
-
-        let angle = Math.atan2(dy,dx);
-
-        ctx.save();
-
-        ctx.translate(x1,y1);
-        ctx.rotate(angle);
-
-        ctx.beginPath();
-
-        let scale = window.diagramScales.deflection;
-        let actualL = d.x[d.x.length-1];
-
-        d.x.forEach((x,j)=>{
-
-            let y = -d.y[j] * scale;
-
-            if(j===0){
-
-                ctx.moveTo(x*L/actualL,y);
-
-            }else{
-
-                ctx.lineTo(x*L/actualL,y);
-            }
-        });
-
-        ctx.strokeStyle = "red";
-
-        ctx.lineWidth = 2;
-
-        ctx.stroke();
-
-        ctx.restore();
+        drawMemberDeflection(
+            ctx,
+            toCanvas,
+            nodes,
+            member,
+            data[i]
+        );
     });
 }
+
+function drawMemberDeflection(ctx,toCanvas,nodes,member,d){
+
+    let m = member;
+
+    let n1 = nodes[m.start];
+    let n2 = nodes[m.end];
+
+    let [x1,y1] = toCanvas(n1[0],n1[1]);
+    let [x2,y2] = toCanvas(n2[0],n2[1]);
+
+    let dx = x2-x1;
+    let dy = y2-y1;
+
+    let L = Math.sqrt(dx*dx+dy*dy);
+
+    let angle = Math.atan2(dy,dx);
+
+    ctx.save();
+
+    ctx.translate(x1,y1);
+    ctx.rotate(angle);
+
+    ctx.beginPath();
+
+    let scale = window.diagramScales.deflection;
+    let actualL = d.x[d.x.length-1];
+
+    d.x.forEach((x,j)=>{
+
+        let y = -d.y[j] * scale;
+
+        if(j===0){
+
+            ctx.moveTo(x*L/actualL,y);
+
+        }else{
+
+            ctx.lineTo(x*L/actualL,y);
+        }
+    });
+
+    ctx.strokeStyle = "red";
+
+    ctx.lineWidth = 2;
+
+    ctx.stroke();
+
+    ctx.restore();
+}
+
 //#endregion
+
+
+
 
 // #region ======================================
 // PAN DRAGGING

@@ -18,6 +18,8 @@ let reportSelections = {
     deflection: []
 };
 
+let memberReportSelections = [];
+
 // #region Report Navigation Function
 
 // =============================
@@ -160,7 +162,8 @@ function populateReportSelection(){
                 <input
                     type="checkbox"
                     ${checked ? "checked" : ""}
-                    value="${item}">
+                    value="${item}"
+                    onchange="saveCurrentReportSelections()">
 
                 ${item}
 
@@ -168,6 +171,57 @@ function populateReportSelection(){
 
         `;
     });
+}
+
+function populateMemberSelectionPanel(){
+
+    if(getReportStyle()=="tabular"){
+
+        populateReportSelection();
+
+        return;
+    }
+
+    document.getElementById(
+        "reportSelectionTitle"
+    ).innerText = "Members";
+
+    let html="";
+
+    if(memberReportSelections.length===0){
+        memberReportSelections =
+            getMembers().map(m=>String(m.name));
+    }
+
+    getMembers().forEach(member=>{
+
+        const checked =
+            memberReportSelections.includes(
+                String(member.name)
+            );
+
+        html += `
+
+        <label class="report-item">
+
+            <input
+                type="checkbox"
+                value="${member.name}"
+                ${checked?"checked":""}
+                onchange="saveMemberSelection()">
+
+            Member ${member.name}
+
+        </label>
+
+        `;
+
+    });
+
+    document.getElementById(
+        "reportSelectionContent"
+    ).innerHTML = html;
+
 }
 
 function toggleSelectAllReport(){
@@ -234,20 +288,26 @@ function toggleSelectAllReport(){
 
 function updateGlobalSelectButton(){
 
-    const btn = document.querySelector(
-        ".report-select-nav-btn"
+    const checkbox = document.getElementById("reportSelectAll");
+
+    if(!checkbox) return;
+
+    checkbox.checked = areAllReportItemsSelected();
+}
+
+function updateMemberContentSelectAll(){
+
+    const checks = document.querySelectorAll(
+        "#memberSidebar input[type='checkbox']:not(#memberContentSelectAll)"
     );
 
-    if(!btn) return;
+    const allChecked =
+        [...checks].every(chk => chk.checked);
 
-    if(areAllReportItemsSelected()){
+    document.getElementById(
+        "memberContentSelectAll"
+    ).checked = allChecked;
 
-        btn.classList.add("active");
-
-    }else{
-
-        btn.classList.remove("active");
-    }
 }
 
 function toggleCurrentSectionSelection(){
@@ -269,27 +329,64 @@ function toggleCurrentSectionSelection(){
     saveCurrentReportSelections();
 }
 
+function toggleReportMemberSelection(){
+
+    const checks =
+        document.querySelectorAll(
+            "#reportSelectionContent input"
+        );
+
+    const all =
+        [...checks].every(c=>c.checked);
+
+    checks.forEach(c=>
+
+        c.checked=!all
+
+    );
+
+    saveReportMemberSelection();
+
+}
+
+function toggleReportMemberContentSelection(){
+
+    const master =
+        document.getElementById(
+            "memberContentSelectAll"
+        ).checked;
+
+    document.querySelectorAll(
+        "#memberSidebar input[type='checkbox']"
+    ).forEach(chk=>{
+
+        if(chk.id!="memberContentSelectAll")
+            chk.checked=master;
+
+    });
+
+    updateMemberContentSelectAll();
+
+}
+
 function areAllReportItemsSelected(){
 
-    const sections=[
+    const totals = {
+        nodes: Object.keys(getNodes()).length,
+        members: getMembers().length,
+        supports: getSupports().length,
+        loads: loadDatabase.length,
+        reactions: window.analysisResults ? getSupports().length : 0,
+        displacements: window.analysisResults ? Object.keys(getNodes()).length : 0,
+        forces: window.analysisResults ? window.memberLabels.length : 0,
+        sfd: window.analysisResults ? window.memberLabels.length : 0,
+        bmd: window.analysisResults ? window.memberLabels.length : 0,
+        deflection: window.analysisResults ? window.memberLabels.length : 0
+    };
 
-        "nodes",
-        "members",
-        "supports",
-        "loads",
-        "reactions",
-        "displacements",
-        "forces",
-        "sfd",
-        "bmd",
-        "deflection"
+    for(const section in totals){
 
-    ];
-
-    for(const section of sections){
-
-        if(reportSelections[section].length===0){
-
+        if(reportSelections[section].length !== totals[section]){
             return false;
         }
     }
@@ -308,15 +405,92 @@ function saveCurrentReportSelections(){
         [...checks]
         .filter(c => c.checked)
         .map(c => c.value);
+
+    updateGlobalSelectButton();
+}
+
+function saveReportMemberSelection(){
+
+    memberReportSelections = [
+
+        ...document.querySelectorAll(
+            "#reportSelectionContent input:checked"
+        )
+
+    ].map(x=>x.value);
+
 }
 
 // #endregion
 
+function getReportStyle(){
+
+    return document.querySelector(
+
+        "input[name='reportStyle']:checked"
+
+    ).value;
+
+}
+
+function changeReportStyle(){
+
+    const isMember =
+        getReportStyle() === "member";
+
+    document.getElementById("tabularSidebar").style.display =
+        isMember ? "none" : "flex";
+
+    document.getElementById("memberSidebar").style.display =
+        isMember ? "flex" : "none";
+
+    const title =
+        document.getElementById("reportSelectionTitle");
+
+    const button =
+    document.getElementById("reportSelectionButton");
+
+    if(isMember){
+
+        title.innerText = "Members";
+
+        button.setAttribute("onclick",
+            "toggleReportMemberSelection()");
+
+    }
+    else{
+
+        title.innerText =
+            currentReportSection.toUpperCase();
+
+        button.setAttribute("onclick",
+            "toggleCurrentSectionSelection()");
+
+    }
+
+    if(isMember){
+        populateMemberSelectionPanel();}
+    else{
+        populateReportSelection();}
+
+}
 
 // #region Report Preview Generation Function
 // =============================
 
 function generateReportPreview(){
+
+    if(getReportStyle()=="tabular"){
+        saveCurrentReportSelections();
+        generateTabularReport();
+    }
+    else{
+        saveReportMemberSelection();
+        generateMemberWiseReport();
+    }
+}
+
+function generateTabularReport(){
 
     let totalSelected = Object.values(
         reportSelections
@@ -955,7 +1129,571 @@ function generateReportPreview(){
 }
 
 
+
+let memberWiseReportSelections = {
+
+    geometry:true,
+
+    loads:true,
+
+    endForces:true,
+
+    maximumValues:true,
+
+    sfd:true,
+
+    bmd:true,
+
+    deflection:true,
+
+    members:[]
+};
+
+
+function generateMemberWiseReport(){
+
+    if(!window.analysisResults){
+
+        document.getElementById(
+            "reportPreview"
+        ).innerHTML = `
+            <div class="report-preview-placeholder">
+
+                <div class="placeholder-icon">📄</div>
+
+                <h3>Report Preview</h3>
+
+                <p>
+                    Select the desired report contents from the left panel and 
+                    click <strong>Generate Preview</strong> to view the report.
+                </p>
+
+            </div>
+        `;
+
+        return;
+    }
+
+    saveReportMemberSelection();
+
+    if(memberReportSelections.length==0){
+
+        document.getElementById(
+            "reportPreview"
+        ).innerHTML=`
+            <div class="report-preview-placeholder">
+
+                <div class="placeholder-icon">📄</div>
+
+                <h3>No Member Selected</h3>
+
+            </div>
+        `;
+
+        return;
+
+    }
+
+    let html = `
+
+    <div class="report-preview">
+
+        <h1>
+            Member-wise Structural Analysis Report
+        </h1>
+
+        <hr>
+
+    `;
+
+    getMembers().forEach(member=>{
+
+        if(
+            !memberReportSelections.includes(
+                String(member.name)
+            )
+        ) return;
+
+        html+=buildMemberPage(member);
+
+    });
+
+    html+="</div>";
+
+    document.getElementById(
+        "reportPreview"
+    ).innerHTML=html;
+
+}
+
+// #region Member-wise Report Generation Function
+
+function buildMemberPage(member){
+
+    let html = `
+
+    <div class="member-report">
+
+        <h1>
+            Member ${member.name}
+        </h1>
+
+        ${
+        document.getElementById("chkGeometry").checked
+        ? buildMemberGeometry(member)
+        : ""
+        }
+
+        ${
+        document.getElementById("chkLoads").checked
+        ? buildMemberLoads(member)
+        : ""
+        }
+
+        ${
+        document.getElementById("chkForces").checked
+        ? buildMemberForces(member)
+        : ""
+        }
+
+        ${
+        document.getElementById("chkMaximum").checked
+        ? buildMemberMaximumValues(member)
+        : ""
+        }
+
+        ${
+        document.getElementById("chkSFD").checked
+        ? buildMemberSFD(member)
+        : ""
+        }
+
+        ${
+        document.getElementById("chkBMD").checked
+        ? buildMemberBMD(member)
+        : ""
+        }
+
+        ${
+        document.getElementById("chkDeflection").checked
+        ? buildMemberDeflection(member)
+        : ""
+        }
+
+    </div>
+
+    `;
+
+    return html;
+
+}
+
+function buildMemberGeometry(member){
+
+    return `
+
+    <h2>Geometry</h2>
+
+    <table class="report-table">
+
+        <tr>
+
+            <td>Start Node</td>
+
+            <td>${member.start}</td>
+
+        </tr>
+
+        <tr>
+
+            <td>End Node</td>
+
+            <td>${member.end}</td>
+
+        </tr>
+
+        <tr>
+
+            <td>Young's Modulus</td>
+
+            <td>${member.E}</td>
+
+        </tr>
+
+        <tr>
+
+            <td>Area</td>
+
+            <td>${member.A}</td>
+
+        </tr>
+
+        <tr>
+
+            <td>Moment of Inertia</td>
+
+            <td>${member.I}</td>
+
+        </tr>
+
+    </table>
+
+    `;
+
+}
+
+function buildMemberLoads(member){
+
+    let html = `
+
+    <h2>Applied Loads</h2>
+
+    <table class="report-table">
+
+        <tr>
+
+            <th>Type</th>
+
+            <th>Magnitude</th>
+
+            <th>Direction</th>
+
+        </tr>
+
+    `;
+
+    loadDatabase.forEach(load=>{
+
+        if(
+
+            load.category!="member"
+
+        ) return;
+
+        if(
+
+            !load.assignedMembers.includes(
+
+                String(member.name)
+
+            )
+
+        ) return;
+
+        html += `
+
+        <tr>
+
+            <td>${load.type}</td>
+
+            <td>${load.value1}</td>
+
+            <td>${load.direction||"-"}</td>
+
+        </tr>
+
+        `;
+
+    });
+
+    html += "</table>";
+
+    return html;
+
+}
+
+function buildMemberForces(member){
+
+    let index =
+        window.memberLabels.indexOf(
+            String(member.name)
+        );
+
+    if(index==-1)
+        return "";
+
+    let F =
+        window.analysisResults.member_forces[index];
+
+    return `
+
+    <h2>End Forces</h2>
+
+    <table class="report-table">
+
+        <tr>
+
+            <th>Fx</th>
+
+            <th>Fy</th>
+
+            <th>Mz</th>
+
+        </tr>
+
+        <tr>
+
+            <td>${F[0].toFixed(3)}</td>
+
+            <td>${F[1].toFixed(3)}</td>
+
+            <td>${F[2].toFixed(3)}</td>
+
+        </tr>
+
+    </table>
+
+    `;
+
+}
+
+function buildMemberMaximumValues(member){
+
+    let sfd =
+        window.analysisResults.sfd.find(
+
+            x=>String(x.member)==String(member.name)
+
+        );
+
+    let bmd =
+        window.analysisResults.bmd.find(
+
+            x=>String(x.member)==String(member.name)
+
+        );
+
+    let def =
+        window.analysisResults.deflection_shapes.find(
+
+            x=>String(x.member)==String(member.name)
+
+        );
+
+    return `
+
+    <h2>Maximum Values</h2>
+
+    <table class="report-table">
+
+        <tr>
+
+            <th>Property</th>
+
+            <th>Maximum</th>
+
+            <th>Minimum</th>
+
+        </tr>
+
+        <tr>
+
+            <td>Shear</td>
+
+            <td>${sfd.max_V.toFixed(3)}</td>
+
+            <td>${sfd.min_V.toFixed(3)}</td>
+
+        </tr>
+
+        <tr>
+
+            <td>Moment</td>
+
+            <td>${bmd.max_M.toFixed(3)}</td>
+
+            <td>${bmd.min_M.toFixed(3)}</td>
+
+        </tr>
+
+        <tr>
+
+            <td>Deflection</td>
+
+            <td>${def.max_deflection.toExponential(3)}</td>
+
+            <td>${def.min_deflection.toExponential(3)}</td>
+
+        </tr>
+
+    </table>
+
+    `;
+
+}
+
+function buildMemberSFD(member){
+
+    const index =
+        window.memberLabels.indexOf(
+            String(member.name)
+        );
+
+    if(index==-1)
+        return "";
+
+    const canvas =
+        createReportCanvas();
+
+    const ctx =
+        canvas.getContext("2d");
+
+    drawReportMemberAxis(
+        ctx,
+        getReportToCanvas(member),
+        getNodes(),
+        member
+    );
+
+    drawMemberSFD(
+        ctx,
+        getReportToCanvas(member),
+        getNodes(),
+        member,
+        window.analysisResults.sfd[index]
+    );
+
+    return `
+
+    <h2>Shear Force Diagram</h2>
+
+    <img
+        src="${canvas.toDataURL()}">
+
+    `;
+
+}
+
+function buildMemberBMD(member){
+
+    const index =
+        window.memberLabels.indexOf(
+            String(member.name)
+        );
+
+    if(index==-1)
+        return "";
+
+    const canvas =
+        createReportCanvas();
+
+    const ctx =
+        canvas.getContext("2d");
+
+    drawReportMemberAxis(
+        ctx,
+        getReportToCanvas(member),
+        getNodes(),
+        member
+    );
+
+    drawMemberBMD(
+        ctx,
+        getReportToCanvas(member),
+        getNodes(),
+        member,
+        window.analysisResults.bmd[index]
+
+    );
+
+    return `
+
+    <h2>Bending Moment Diagram</h2>
+
+    <img
+        src="${canvas.toDataURL()}">
+
+    `;
+
+}
+
+function buildMemberDeflection(member){
+
+    const index =
+        window.memberLabels.indexOf(
+            String(member.name)
+        );
+
+    if(index==-1)
+        return "";
+
+    const canvas =
+        createReportCanvas();
+
+    const ctx =
+        canvas.getContext("2d");
+
+    drawReportMemberAxis(
+        ctx,
+        getReportToCanvas(member),
+        getNodes(),
+        member
+    );
+
+    drawMemberDeflection(
+        ctx,
+        getReportToCanvas(member),
+        getNodes(),
+        member,
+        window.analysisResults.deflection_shapes[index]
+    );
+
+    return `
+
+    <h2>Deflected Shape</h2>
+
+    <img
+        src="${canvas.toDataURL()}">
+
+    `;
+
+}
+
+function createReportCanvas(){
+
+    const canvas = document.createElement("canvas");
+    canvas.width = 700;
+    canvas.height = 220;
+    return canvas;
+
+}
+
+function getReportToCanvas(member){
+
+    const nodes = getNodes();
+
+    const n1 = nodes[member.start];
+
+    const n2 = nodes[member.end];
+
+    const margin = 60;
+
+    const width = 700 - 2*margin;
+
+    const x1 = margin;
+
+    const x2 = margin + width;
+
+    const y = 110;
+
+    return function(x0,y0){
+
+        if(x0==n1[0] && y0==n1[1])
+            return [x1,y];
+
+        if(x0==n2[0] && y0==n2[1])
+            return [x2,y];
+
+        return [x1,y];
+
+    };
+
+}
+
 // #endregion
+
+// #endregion
+
 
 
 function exportReportPDF(){
